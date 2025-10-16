@@ -72,3 +72,304 @@ public class Desafio_Java_part12_Felipe_Augusto {
     }
 }
 
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package desafio_java_part1.pkg2_felipe_augusto;
+import java.util.Scanner;
+/**
+ *
+ * @author Aluno
+ */
+public class contaBancaria {
+    Scanner en = new Scanner(System.in);
+    public double saldo;
+    public double SaldoDolar;
+    
+    
+    
+    public contaBancaria(){
+        this.saldo =100.00;
+        this.SaldoDolar = 0.0;       
+    }
+    
+    public void depositar(double valor){
+        saldo += valor;
+    }
+    
+    public boolean comprarDolar(double quantidade,double cotacao){
+        String resposta = "N";
+        String retorna = "N";
+        double custo = quantidade * cotacao;
+        if (saldo >= custo){
+            saldo -= custo;
+            SaldoDolar += quantidade;
+            return true;
+        }
+        
+        return false;
+        
+    }
+}
+    
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package desafio_java_part1.pkg2_felipe_augusto;
+
+/**
+ *
+ * @author Aluno
+ */
+public class ExtratoBancario {
+     public Movimentacao[] movimentacoes = new Movimentacao[10];
+     public int posicao = 0;
+     public int total = 0;
+        
+     public void adicionarMovimentacao(String descricao, double valor) {
+        movimentacoes[posicao] =  new Movimentacao(descricao, valor);
+        posicao = (posicao + 1) % 10;
+        if (total < 10) total++;
+        }
+        
+        public void exibirExtrato() {
+            System.out.println("\nEXTRATO BANCARIO \n");
+            if (total == 0) {
+                System.out.println("Nenhum extrato");
+            } else {
+                int indice = (posicao - total + 10) % 10;
+                for (int i = 0; i < total; i++) {
+                    int atual = (indice + i) % 10;
+                    System.out.println((i + 1) + ") " + movimentacoes [atual]);
+                }
+            }
+        }
+}
+
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package desafio_java_part1.pkg2_felipe_augusto;
+
+/**
+ *
+ * @author Aluno
+ */
+public class Movimentacao {
+    public String  descricao;
+    public double valor;
+        
+    public Movimentacao(String descricao,double valor){
+        this.descricao = descricao;
+        this.valor = valor;
+        }
+        public String toString(){
+            return descricao + "-R$ "+String.format("%.2f ", valor);
+        } 
+}
+
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package desafio_java_part1.pkg2_felipe_augusto;
+
+import java.util.Scanner;
+
+/**
+ *
+ * @author Aluno
+ */
+public class ServicoBancario {
+    Scanner en = new Scanner(System.in);
+    
+        String sair = "N";
+        String retorna = "N";
+        public contaBancaria conta ;
+        public ExtratoBancario extrato;
+        public Scanner  scanner;
+        private final double cotacao = 5.32;
+        
+        public ServicoBancario (Scanner scanner) {
+            this.conta = new contaBancaria();
+            this.extrato = new ExtratoBancario();       
+        }
+        
+        public void mostraSaldo () {
+            System.out.printf("Saldo em reais: R$ %.2f\n", conta.saldo);
+            System.out.printf("Saldo em dólares: US$ %.2f\n", conta.SaldoDolar);
+        }
+        
+        public void realizarDeposito() {
+            double valor;
+            do {
+                System.out.print("Informe o valor do deposito (R$):  ");
+                valor = en.nextDouble();
+                if (valor < 1 || valor > 4999) {
+                    System.out.println("!!!Valor invalido!!! \nO deposito deve ser maior que R$ 0,00 e ate R$ 5.000,00. Digite novamente. ");
+                }
+            } while (valor < 1 || valor > 4999);
+            
+            conta.depositar(valor);
+            extrato.adicionarMovimentacao("Depósito", valor);
+            System.out.println("Depósito realizado com sucesso.");
+        }
+        
+        public void exibirExtrato() {
+            extrato.exibirExtrato();
+        }
+        
+        public void simularEmprestimo() {
+            SimuladorEmprestimo sim = new SimuladorEmprestimo();
+            
+            double valorEmprestimo;
+            do {
+                System.out.print("Informe o valor do emprestimo (R$): ");
+                valorEmprestimo = en.nextDouble();
+            } while (valorEmprestimo < 200 || valorEmprestimo > 100000);
+            
+            System.out.print("Informe o seu salario bruto (R$):  ");
+            double salario = en.nextDouble();
+            
+            int parcelas;
+            int [] opcoesValidas = {6, 12, 18, 24, 30, 36, 40, 48, 56, 60, 72};
+            boolean valido;
+            do {
+                System.out.print("Quantidade de parcelas (6, 12, 18, 24, 30, 36, 40, 48, 56, 60 ou 72x): ");
+                parcelas = en.nextInt();
+                valido = false;
+                for (int op : opcoesValidas) {
+                    if (op == parcelas) {
+                        valido = true;
+                        break;
+                    }
+                }
+                if (!valido) {
+                    System.out.println("Insira uma quantidade de parcela valida.");
+                }
+            } while (!valido);
+            sim.simular(salario,valorEmprestimo, parcelas);
+        }
+        
+        public void comprarDolar() {
+            System.out.printf("Seu saldo bancario e de R$ %.2f \n", conta.saldo);
+            do {
+                retorna = "N";
+                System.out.print("Quantos dolares deseja comprar (US$)?  ");
+            double quantidade = en.nextDouble();
+            
+            double custo = quantidade * cotacao;
+            if (conta.saldo < custo) {
+                System.out.print("Custo em Reais: R$ "+custo+"\nSeu saldo atual e insuficiente.");
+                return;
+            }
+            System.out.printf("Custo em Reais: R$ %.2f \n", custo);
+            System.out.printf("Confirma compra? (S/N): ");
+            en.nextLine();
+            String resposta = en.nextLine();
+            
+             if (resposta.equalsIgnoreCase("S")) {
+                 conta.comprarDolar(quantidade, cotacao);
+                 extrato.adicionarMovimentacao("Compra de Dólar", custo);
+                 System.out.printf("\nCompra realizada com sucesso. \nNovo saldo: \n- Reais: R$ %.2f \n- Dólares: US$ %.2f\n", conta.saldo, conta.SaldoDolar);
+             } else {
+                 if (resposta.equalsIgnoreCase("N")) {
+                System.out.print("Deseja simular novamente(R), voltar ao menu(V) ou encerrar o programa (E)? ");
+                retorna = en.nextLine();
+                }
+             } 
+            }while (retorna.equalsIgnoreCase("R"));
+            
+             
+             
+             
+             
+        }
+        
+        
+        public void voltarMenu() {
+            
+            do{
+               if (sair.equalsIgnoreCase("S") || retorna.equalsIgnoreCase("E")) {
+           sair = "S";}
+           else {if (retorna.equalsIgnoreCase("V")) {}
+           else {
+               System.out.print("\nDeseja retorna ao menu inicial (V) ou encerrar o programa (E): ");
+               retorna = en.nextLine();
+               if (retorna.equalsIgnoreCase("E")) {
+               System.out.println("Encerrando programa...");
+               sair = "S"; 
+               }    
+               else { if (retorna.equalsIgnoreCase("V")) {}
+               else {System.out.println("Opcao invalida.");}
+               }}} 
+           } while (!sair.equalsIgnoreCase("S") && !retorna.equalsIgnoreCase("V"));
+        }
+    }
+    
+    
+    
+    
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package desafio_java_part1.pkg2_felipe_augusto;
+
+import java.util.Random;
+
+/**
+ *
+ * @author Aluno
+ */
+public class SimuladorEmprestimo {
+    public void simular (double salario, double valorEmprestimo, int parcelas) {
+        double parcelaMax = salario * 0.3;
+        double juros = valorEmprestimo * 0.02;
+        double total = valorEmprestimo + juros;
+        double valorParcela = total / parcelas;
+            
+        System.out.printf("Valor da parcela: R$ %.2f x %d \n", valorParcela, parcelas);
+        System.out.printf("Valor do emprestimo: R$ %.2f \n", valorEmprestimo);
+        System.out.printf("Valor total do emprestimo a ser pago: R$ %.2f \n", total);
+            
+        if (valorParcela > parcelaMax) {
+            System.out.println("Emprestimo indisponivel! O valor da parcela nao pode ultrapassar o valor de R$ "+parcelaMax);
+        } else {
+            int protocolo = new Random().nextInt(99999);
+            System.out.println("Emprestimo disponivel! \n Entre em contato com a central e informe o numero do protocolo EM"+protocolo);
+            }
+        }
+}
+
+
