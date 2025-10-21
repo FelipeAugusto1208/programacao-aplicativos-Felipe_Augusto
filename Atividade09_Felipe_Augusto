@@ -1,0 +1,892 @@
+// Questao 01
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.atividade09_felipe_augusto;
+import java.util.Scanner;
+
+/**
+ *
+ * @author ac739
+ */
+public class Atividade09_Felipe_Augusto {
+
+    public static void main(String[] args) {
+        Scanner en = new Scanner (System.in);
+        AgendaEletronica agenda = new AgendaEletronica();
+        int opcao;
+         
+        
+        do{
+            System.out.print("\n==== AGENDA ELETRONICA ====\n 1.Cadastra contato\n 2.Consultar contato\n 3.Editar contato\n 4.Excluir contato\n 5.sair\n Ecolha uma opcao: ");
+            opcao = en.nextInt(); 
+            
+            
+            
+             switch(opcao){
+            case 1:
+                Contato contato = new Contato();
+                contato.Dados();
+                agenda.adicionarContato(contato);
+               
+                break;
+             
+            case 2:
+                agenda.consultarContato();
+                break;
+            case 3:
+                agenda.editarContato();
+                break;
+            case 4:
+                agenda.excluirContato();
+                break;
+            case 5:
+                System.out.println("Encerrado o programa");
+                break;
+                
+            default:
+                System.out.print("Opção invalida.");
+             
+                
+        }
+      
+        }while(opcao !=5);
+        
+   
+        
+    }
+}
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.atividade09_felipe_augusto;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+/**
+ *
+ * @author ac739
+ */
+public class AgendaEletronica {
+    private ArrayList<Contato> listaContato = new ArrayList<>();
+    private Scanner sc = new Scanner(System.in);
+
+    public void consultarContato() {
+        if (listaContato.isEmpty()) {
+            System.out.println("Não há contatos cadastrados.");
+            return;
+        }
+        System.out.println("Contatos cadastrados no sistema:");
+        for (Contato c : listaContato) {
+            System.out.printf("Nome: %s | Telefone: %s | Email: %s\n", c.getNome(), c.getTelefone(), c.getEmail());
+        }
+    }
+
+    public void editarContato() {
+        System.out.print("Digite o telefone que deseja editar: ");
+        String telefone = sc.nextLine();
+
+        Contato contato = buscaPorTelefone(telefone);
+        if (contato == null) {
+            System.out.println("Contato não encontrado");
+            return;
+        }
+
+        System.out.println("Editando contato: " + contato.getNome());
+
+        System.out.print("Novo nome (enter para manter): ");
+        String novoNome = sc.nextLine();
+        if (!novoNome.trim().isEmpty()) {
+            contato.setNome(novoNome);
+        }
+
+        System.out.print("Novo telefone (enter para manter): ");
+        String novoTelefone = sc.nextLine();
+        if (!novoTelefone.trim().isEmpty()) {
+            if (telefoneExiste(novoTelefone) && !novoTelefone.equals(contato.getTelefone())) {
+                System.out.println("Erro! Já existe um contato com esse número.");
+            } else if (!novoTelefone.matches("[0-9]+")) {
+                System.out.println("Erro! O telefone pode conter apenas números.");
+            } else {
+                contato.setTelefone(novoTelefone);
+            }
+        }
+
+        System.out.print("Novo email (enter para manter): ");
+        String novoEmail = sc.nextLine();
+        if (!novoEmail.trim().isEmpty() && !novoEmail.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+            System.out.println("Erro! Email inválido. Permanecendo com o antigo.");
+        } else {
+            contato.setEmail(novoEmail);
+        }
+
+        System.out.println("Contato atualizado!");
+    }
+
+    public void excluirContato() {
+        System.out.print("Digite o número que deseja excluir: ");
+        String telefone = sc.nextLine();
+
+        Contato contato = buscaPorTelefone(telefone);
+        if (contato == null) {
+            System.out.println("Contato não encontrado");
+            return;
+        }
+
+        listaContato.remove(contato);
+        System.out.println("Contato removido!");
+    }
+    private Contato buscaPorTelefone(String telefone) {
+        for (Contato contato : listaContato) {
+            if (contato.getTelefone().equals(telefone)) {
+                return contato;
+            }
+        }
+        return null;
+    }
+
+    private boolean telefoneExiste(String telefone) {
+        for (Contato contato : listaContato) {
+            if (contato.getTelefone().equals(telefone)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void adicionarContato(Contato contato){
+        listaContato.add(contato);
+        System.out.print("Contato cadastrado com sucesso!");
+    }
+}
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.atividade09_felipe_augusto;
+import java.util.Scanner;
+/**
+ *
+ * @author ac739
+ */
+public class Contato {
+    Scanner en = new Scanner(System.in);
+    private String Nome = "";
+    private String Telefone = "";
+    private String Email = "";
+    
+    
+    public void  Dados(){
+         do{
+        try{
+            System.out.print("Nome: ");
+            Nome = en.nextLine();
+            if(Nome.trim().isEmpty()){
+                throw new Exception("O campo nao pode ficar vazio!\n");
+            }
+            System.out.print("Telefone: ");
+            Telefone = en.nextLine();
+            if(!Telefone.matches("[0-9]+")){
+                throw new Exception("Digite apenas numero!");
+            }
+            System.out.print("E-mail: ");
+            Email = en.nextLine();
+            if (!Email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")){
+                throw new Exception("Email invalido!");
+            }
+            
+            break;
+            
+        }catch(Exception e){
+            System.out.print("Erro!!"+ e.getMessage());
+            System.out.print("Por favor tente novamente!\n");
+        }
+    }while (true);
+         
+}
+    
+    public String getNome(){
+        return Nome;
+    }
+    public String getTelefone(){
+        return Telefone;
+    }
+    public String getEmail(){
+        return Email;
+    }
+    public void setNome(String nome){
+        this.Nome = nome;
+    }
+    public void setTelefone(String telefone){
+        this.Telefone = telefone;
+    }
+    public void setEmail(String email){
+        this.Email = email;
+    }
+    
+}
+
+
+
+// Questao 02
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package atividade09_felipe_augusto;
+import java.util.Scanner;
+import java.time.LocalDate;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Atividade09_Felipe_Augusto {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        
+        Scanner en = new Scanner (System.in);
+        
+        String buscar,nome,confirma;
+        int opcao;  
+        
+        Livro[] livros = Acervo.getLivros();
+        
+        do {
+            System.out.println("\n=== BIBLIOTECA ===");
+            System.out.println("1) Consultar acervo");
+            System.out.println("2) Pegar livro emprestado");
+            System.out.println("3) Sair");
+            
+            System.out.print("\nEscolha uma opcao: ");
+            opcao = en.nextInt();
+            en.nextLine();
+            
+            switch (opcao) {
+                case 1:
+                    System.out.println("\nCodigo | Titulo | Autor | Status");
+                    for (Livro livro : livros) {
+                        System.out.println(livro.getCodigo() + " | " + livro.getTitulo() + " | " + livro.getAutor() + " | " + livro.getData() + " | " + livro.getStatus());
+                    }
+                    break;
+                case 2:
+                    EmprestimoLivro.realizarEmprestimo(livros, en);
+                    break;
+                    
+                    
+                case 3:
+                    System.out.println("Saindo...");
+                    break;
+                    
+                default:
+                    System.out.println("Opcao invalida!");
+                
+            }  
+            
+        } while(opcao != 3);
+        
+    } 
+    
+}
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Acervo {
+    
+    
+    public static Livro[] getLivros() {
+        return new Livro[] {
+            new Livro("001", "O Pequeno Principe", "Antoine de Saint-Exupery", "1943"),
+            new Livro("002", "Dom Casmurro", "Machado de Assis", "1899"),
+            new Livro("003", "O Senhor dos Aneis", "J.R.R. Tolkien", "1954"),
+            new Livro("004", "1984", "George Orwell", "1949"),
+            new Livro("005", "A Revolucao dos Bichos", "George Orwell", "1945"),
+            new Livro("006", "O Hobbit", "J.R.R. Tolkien", "1937"),
+            new Livro("007", "Harry Potter e a Pedra Filosofal", "J.K. Rowling", "1997"),
+            new Livro("008", "O Codigo Da Vinci", "Dan Brown", "2003"),
+            new Livro("009", "O Morro dos Ventos Uivantes", "Emily Bronte", "1847"),
+            new Livro("010", "Orgulho e Preconceito", "Jane Austen", "1813"),
+            new Livro("011", "A Culpa e das Estrelas", "John Green", "2012"),
+            new Livro("012", "A Menina que Roubava Livros", "Markus Zusak", "2005"),
+            new Livro("013", "O Alquimista", "Paulo Coelho", "1988"),
+            new Livro("014", "It: A Coisa", "Stephen King", "1986"),
+            new Livro("015", "O Iluminado", "Stephen King", "1977"),
+            new Livro("016", "As Cronicas de Narnia", "C.S. Lewis", "1950"),
+            new Livro("017", "Moby Dick", "Herman Melville", "1851"),
+            new Livro("018", "Cem Anos de Solidao", "Gabriel Garcia Marquez", "1967"),
+            new Livro("019", "O Apanhador no Campo de Centeio", "J.D. Salinger", "1951"),
+            new Livro("020", "A Metamorfose", "Franz Kafka", "1915")
+        };
+    }
+}
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class calcular7DiasUteis {
+    
+    
+    
+    
+    
+    public static LocalDate calcular7DiasUteis(LocalDate dataInicial) {
+        int diasUteis = 0;
+        LocalDate data = dataInicial;
+        while (diasUteis < 7) {
+            data = data.plusDays(1);
+            if (!(data.getDayOfWeek() == DayOfWeek.SATURDAY || data.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+                diasUteis++;
+            }
+        }
+        return data;
+    }
+    
+}
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto;
+import java.time.LocalDate;
+import java.util.Scanner;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class EmprestimoLivro {
+    
+    
+    
+    public static void realizarEmprestimo(Livro[] livros, Scanner en) {
+
+        System.out.print("\nInforme seu nome para registro: ");
+        String nome = en.nextLine();
+        System.out.print("Digite o codigo do livro: ");
+        String buscar = en.nextLine();
+
+        boolean encontrado = false;
+
+        for (Livro livro : livros) {
+            if (livro.getCodigo().equals(buscar)) {
+                encontrado = true;
+
+                if (livro.estaDisponivel()) {
+
+                    LocalDate dataEmprestimo = LocalDate.now();
+                    LocalDate dataDevolucao = calcular7DiasUteis.calcular7DiasUteis(dataEmprestimo);
+
+                    System.out.print("Confirmar emprestimo? (S/N): ");
+                    String confirma = en.nextLine();
+
+                    if (confirma.equalsIgnoreCase("S")) {
+                        livro.setStatus("Emprestado");
+                        System.out.println("Emprestimo registrado!");
+
+                        System.out.println("\n[RECIBO]");
+                        System.out.println("Leitor: " + nome);
+                        System.out.println("Livro: Codigo " + livro.getCodigo() + " | \"" + livro.getTitulo() + "\" (" + livro.getAutor() + ")");
+                        System.out.println("Emprestimo: " + dataEmprestimo);
+                        System.out.println("Devolucao (7 dias uteis): " + dataDevolucao);
+                        System.out.println("Status do livro: " + livro.getStatus());
+
+                    } else {
+                        System.out.println("Emprestimo cancelado.");
+                    }
+
+                } else {
+                    System.out.println("Desculpe, o livro '" + livro.getTitulo() + "' ja esta emprestado.");
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("Codigo de livro nao encontrado.");
+        }
+    }
+}
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Livro {
+    
+    private String codigo;
+    private String titulo;
+    private String autor;
+    private String data;
+    private String status;
+
+    public Livro(String codigo, String titulo, String autor, String data) {
+        this.codigo = codigo;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.data = data;
+        this.status = "Disponivel";
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean estaDisponivel() {
+        return status.equalsIgnoreCase("Disponivel");
+    }
+
+    public void mostrar() {
+        System.out.println(codigo + " | " + titulo + " | " + autor + " | " + data + " | " + status);
+    }
+    
+    
+    
+}
+
+
+
+
+
+// Questao 03
+
+
+
+    /*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.atividade09_alexandre_henrich;
+import java.util.Scanner;
+/**
+ *
+ * @author ac739
+ */
+public class Atividade09_Alexandre_henrich {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner (System.in);
+        DestinoTarefas gerenciador = new DestinoTarefas();
+        int opcao;
+        
+        do{
+            System.out.print("\n=== TO-DO ===\n 1.Adicionar Tarefa\n 2.Concluir Tarefa\n 3.Listar Tarefas\n 4.Sair\n Escolha uma opcao:");
+            opcao = sc.nextInt();
+            
+            
+            switch(opcao){
+                case 1:
+                   gerenciador.AdicionarTarefas();
+                    break;
+                case 2:
+                    gerenciador.alterarStatus();
+                    break;
+                case 3:
+                    gerenciador.listarTarefas();
+                    break;
+                case 4:
+                    System.out.print("Encerrando programa");
+                    break;
+                default:
+                    System.out.print("Opcao invalida");
+                
+            }
+        }while (opcao !=4);
+    }
+}
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.atividade09_alexandre_henrich;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author ac739
+ */
+public class addTarefas {
+    private String descricao;
+    private String status;
+    
+    public  addTarefas(String descricao){
+        this.descricao = descricao;
+        this.status = "PENDENTE";
+
+}
+    public String getDescricao(){
+        return descricao;
+    }
+    public String getStatus(){
+        return status;
+    }
+    public void setStatus(String Status){
+        this.status = status;
+    } 
+}
+    
+    
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.atividade09_alexandre_henrich;
+import java.util.Scanner;
+import java.util.ArrayList;
+/**
+ *
+ * @author ac739
+ */
+public class DestinoTarefas {
+    Scanner en = new Scanner (System.in);
+    ArrayList<addTarefas> listaTarefas = new ArrayList<>();
+    
+    
+    public void AdicionarTarefas(){
+        int i = listaTarefas.size() + 1;
+        while(true){
+            System.out.print("===[ADICIONAR TAREFA]===\n "+i+"° Descreição: ");    
+            String descricao = en.nextLine();
+            
+            if(descricao.trim().isEmpty()){
+                System.out.print("O campo nao pode ficar vazio!!");
+            }else{
+                addTarefas novaTarefa = new addTarefas(descricao);
+                listaTarefas.add(novaTarefa);
+                System.out.print("Tarefa #"+i+" Adicionada"+ novaTarefa.getStatus());
+                i++;
+                break;
+            
+            }
+        }
+    }
+    
+    public void listarTarefas(){
+        if(listaTarefas.isEmpty()){
+            System.out.print("Nao a tarefas cadastradas.");
+            return;
+        }
+        System.out.print("\nLista de tarefas ");
+        for(int i = 0 ;i<listaTarefas.size(); i++){
+            addTarefas t = listaTarefas.get(i);
+            System.out.print((i+1)+ " - "+ t.getDescricao()+ " - "+ t.getStatus());
+        }
+    }
+    
+    public void  alterarStatus(){
+        System.out.print("Digite o id da tarefa:");
+        int id = en.nextInt();
+        en.nextLine();
+        
+        if (id <= 0 || id > listaTarefas.size()){
+           System.out.print("Id invalido!!");
+           return;
+        }
+        
+        addTarefas tarefa = listaTarefas.get(id - 1);
+        tarefa.setStatus("CONCLUIDA");
+        System.out.print("Tarefa #"+id+" foi marcada como (CONCLUIDA)");
+        }
+}
+
+
+
+
+
+
+// Questao 04
+
+
+    /*
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+     */
+    package atividade09_felipe_augusto04;
+    import java.util.Scanner;
+    /**
+     *
+     * @author FELIPE ROCHA
+     */
+    public class Atividade09_Felipe_Augusto04 {
+
+        private static Scanner en = new Scanner(System.in);
+        private static Avaliacao[] avaliacoes;
+
+        private static Aluno[] alunos = {
+            new Aluno("0101", "Ana Beatriz Costa", 0),
+            new Aluno("0102", "Joao Vitor Monteiro Cardoso", 0),
+            new Aluno("0103", "Bruno Gomes Ferreira", 0),
+            new Aluno("0104", "Carla Dias Almeida", 0),
+            new Aluno("0105", "Daniel Martins Pereira", 0),
+            new Aluno("0106", "Eduarda Lima Rocha", 0),
+            new Aluno("0107", "Felipe Azevedo Barbosa", 0),
+            new Aluno("0108", "Gabriela Castro Souza", 0),
+            new Aluno("0109", "Heitor Nogueira Pinto", 0),
+            new Aluno("0110", "Isabela Ribeiro Campos", 0)
+        };
+
+        /**
+         * @param args the command line arguments
+         */
+        public static void main(String[] args) {
+            // TODO code application logic here
+
+             int opcao;
+        do {
+            System.out.println("\n=== SISTEMA DE NOTAS ===");
+            System.out.println("1) Definir avaliacoes");
+            System.out.println("2) Lancar notas dos alunos");
+            System.out.println("3) Gerar boletim");
+            System.out.println("4) Sair");
+            System.out.print("\nDigite qual opcao deseja: ");
+            opcao = en.nextInt();
+            en.nextLine();
+
+            switch (opcao) {
+                case 1 -> definirAvaliacoes();
+                case 2 -> lancarNotas();
+                case 3 -> gerarBoletim();
+                case 4 -> System.out.println("Saindo...");
+                default -> System.out.println("Opcao invalida!");
+            }
+        } while (opcao != 4);
+    }
+
+        private static void definirAvaliacoes() {
+            System.out.print("Quantas avaliacoes? ");
+            int numAvaliacoes = en.nextInt();
+            en.nextLine();
+            avaliacoes = new Avaliacao[numAvaliacoes];
+            int somaTotal = 0;
+
+            for (int i = 0; i < numAvaliacoes; i++) {
+                System.out.print("Nome da avaliacao " + (i + 1) + ": ");
+                String nome = en.nextLine();
+                int pontuacao;
+                do {
+                    System.out.print("Pontuacao maxima : ");
+                    pontuacao = en.nextInt();
+                    en.nextLine();
+                    if (somaTotal + pontuacao > 100) {
+                        System.out.println("As pontuacoes nao pode ultrapassar 100");
+                    }
+                } while (somaTotal + pontuacao > 100);
+                somaTotal += pontuacao;
+                avaliacoes[i] = new Avaliacao(nome, pontuacao);
+            }
+
+            for (Aluno aluno : alunos) {
+                aluno.atualizarNotas(avaliacoes.length);
+            }
+
+            System.out.println("Total definido: " + somaTotal + " pontos.");
+            System.out.println("Esquema salvo com sucesso.\n");
+        }
+
+        private static void lancarNotas() {
+            if (avaliacoes == null) {
+                System.out.println("Defina as avaliacoes primeiro!\n");
+                return;
+            }
+
+            for (Aluno aluno : alunos) {
+                System.out.println("Aluno " + aluno.getCodigo() + " | " + aluno.getNome());
+                for (int i = 0; i < avaliacoes.length; i++) {
+                    int max = avaliacoes[i].getPontuacaoMax();
+                    double nota;
+                    while (true) {
+                        System.out.print(avaliacoes[i].getNome() + " (0-" + max + "): ");
+                        nota = en.nextDouble();
+                        en.nextLine();
+                        if (nota >= 0 && nota <= max) break;
+                        System.out.println("Nota invalida!");
+                    }
+                    aluno.setNota(i, nota);
+                }
+                System.out.println("Notas salvas!\n");
+            }
+        }
+
+        private static void gerarBoletim() {
+            if (avaliacoes == null) {
+                System.out.println("Defina as avaliacoes primeiro!\n");
+                return;
+            }
+
+            System.out.printf("%-6s | %-25s | %-10s | %-12s\n", "Codigo", "Nome", "Nota Final", "Descricao");
+            System.out.println("---------------------------------------------------------------");
+
+            for (Aluno aluno : alunos) {
+                aluno.calcularNotaFinal(avaliacoes);
+                System.out.printf("%-6s | %-25s | %10.2f | %-12s\n",
+                        aluno.getCodigo(), aluno.getNome(), aluno.getNotaFinal(), aluno.getDescricao());
+            }
+            System.out.println();
+        }
+    }
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto04;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+
+    public class Aluno {
+    private String codigo;
+    private String nome;
+    private double[] notas;
+    private double notaFinal;
+    private String descricao;
+
+    public Aluno(String codigo, String nome, int numAvaliacoes) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.notas = new double[numAvaliacoes];
+    }
+
+    public String getCodigo() { return codigo; }
+    public String getNome() { return nome; }
+    public double[] getNotas() { return notas; }
+    public double getNotaFinal() { return notaFinal; }
+    public String getDescricao() { return descricao; }
+
+    public void setNota(int indice, double nota) {
+        this.notas[indice] = nota;
+    }
+
+    public void atualizarNotas(int numAvaliacoes) {
+        double[] novasNotas = new double[numAvaliacoes];
+        for (int i = 0; i < Math.min(notas.length, numAvaliacoes); i++) {
+            novasNotas[i] = notas[i];
+        }
+        this.notas = novasNotas;
+    }
+
+    public void calcularNotaFinal(Avaliacao[] avaliacoes) {
+        double soma = 0;
+        for (double nota : notas) soma += nota;
+        this.notaFinal = soma;
+        if (soma < 45) descricao = "Reprovado";
+        else if (soma < 60) descricao = "Recuperacao";
+        else descricao = "Aprovado";
+    }
+}
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package atividade09_felipe_augusto04;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Avaliacao {
+    private String nome;
+    private int pontuacaoMax;
+
+    public Avaliacao(String nome, int pontuacaoMax) {
+        this.nome = nome;
+        this.pontuacaoMax = pontuacaoMax;
+    }
+
+    public String getNome() { return nome; }
+    public int getPontuacaoMax() { return pontuacaoMax; }
+}
