@@ -1,0 +1,489 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package trabalho_pratico_l_felipe_augusto;
+import java.util.Scanner;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Trabalho_Pratico_l_Felipe_Augusto {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        
+        Scanner en = new Scanner (System.in);
+        Veiculo v = new Veiculo();
+        CalculadoraTarifa c = new CalculadoraTarifa();
+        
+        int[] historicoCod = new int[100];
+        double[] historicoValor = new double[100];
+        String[] historicoForma = new String[100];
+        int historicoCont = 0;
+        double valorTotal = 0;
+        String forma = "";
+        
+        String [] vagas = new String [10];
+        for (int i = 0; i < 10; i++) {
+            vagas[i] = "LIVRE";
+        }
+        
+        int [] tipoVaga = new int [10];
+        for (int i = 0; i < 3; i++) {
+            tipoVaga[i] = 2;
+        }
+        for (int i = 3; i < 5; i++) {
+            tipoVaga[i] = 3;
+        }
+        for (int i = 5; i < 10; i++) {
+            tipoVaga[i] = 1;
+        }
+        
+        
+        String [] placa = new String [10];
+        Veiculo[] veiculos = new Veiculo[10];
+        int [] codigos = new int [10];
+        int codigo = 1;
+        int opcao, procurarCodigo, cont, pagamento;
+        
+        do {
+            
+            while (true) {
+                try {
+                    System.out.println("\n===== Menu Inicial do Estacionamento =====");
+                    System.out.println("1 - Registrar Veiculo em Vaga \n2 - Finalizar Uso do Veiculo na Vaga \n3 - Consultar Disponibilidade de Vagas \n4 - Consultar Saldo e Historico de Pagamentos \n0 - Sair");
+                    System.out.print("\nDigite a opcao desejada: ");
+                    opcao = en.nextInt();
+
+                    if (opcao < 0 || opcao > 4) {
+                        System.out.println("Opcao invalida. Por favor, digite 1, 2, 3, 4 ou 0.");
+                        continue;
+                    }
+                    break;
+
+                }catch (Exception e) {
+                    System.out.println("Entrada invalida. Digite apenas numeros.");
+                    en.nextLine();
+                    continue;
+                }
+            }
+            
+            switch (opcao) {
+                case 1:
+                    v.cadastro();
+                    int encontraVaga = 0;
+                    for (int i = 0; i < 10; i++) {
+                        if (tipoVaga[i] == v.tipo && vagas[i].equals("LIVRE")) {
+                            vagas[i] = "OCUPADA - Placa: " + v.placa;
+                            placa[i] = "Placa: " + v.placa;
+                            veiculos[i] = v;
+                            System.out.println("\nVeiculo registrado com sucesso na vaga " + (i + 1));
+                            codigos[i] = codigo;
+                            System.out.println("Codigo do veiculo: " + codigo++);
+                            encontraVaga = 1;
+                            break;
+                        } 
+                    }
+                    if (encontraVaga == 0){
+                            System.out.println("Nao ha vagas disponiveis para o tipo de veiculo selecionado.");
+                            break;
+                        }
+                    break;
+                    
+                case 2:
+                    System.out.println("\n--- Veiculos Estacionados ---");
+                    cont = 0;
+                    int codigoInvalido = 0;
+                    for (int i = 0; i < 10; i++) {
+                        if (!vagas[i].equals("LIVRE")) {
+                            System.out.println("Codigo: " + codigos[i] + " | Placa: " + placa[i] + " | Vaga: " + (i + 1));
+                            cont++;
+                        } 
+                    }
+                    
+                    if (cont == 0) {
+                        System.out.println("Nao ha veiculos estacionados.");
+                        break;
+                    }
+                    
+                    while (true) {
+                        try {
+                            System.out.print("Digite o codigo do veiculo para saida: ");
+                            procurarCodigo = en.nextInt();
+                            
+                            for (int i = 0; i < 10; i++) {
+                                if (procurarCodigo == codigos[i]) {
+                                    c.calculo(veiculos[i]);
+                                    System.out.println("Valor a pagar: R$ " + c.valor);
+                                    valorTotal += c.valor;
+                                    historicoCod[historicoCont] = procurarCodigo;
+                                    historicoValor[historicoCont] = c.valor;
+                                    vagas[i] = "LIVRE";
+                                    placa[i] = null;
+                                    veiculos[i] = null;
+                                    codigos[i] = 0;
+                                    codigoInvalido = 1;
+                                    break;
+                                }
+                            }
+                            if (codigoInvalido == 0) {
+                                    System.out.println("Codigo nao encontrado. Tente novamente.");
+                                    continue;
+                                }
+                            break;
+                        } catch (Exception e) {
+                            System.out.println("Erro! Digite apenas numeros.");
+                            en.nextLine();
+                        }
+                    }
+                    
+                    
+                        System.out.println("\n--- Tipo de Pagamento ---");
+                    System.out.println("1 - Dinheiro \n2 - PIX \n3 - Cartao");
+                    
+                    while (true) {
+                        try {
+                            System.out.print("Digite o tipo de pagamento: ");
+                            pagamento = en.nextInt();
+                            
+                            if(pagamento < 1 || pagamento > 3) {
+                                System.out.println("Tipo invalido. Por favor, digite 1, 2 ou 3.");
+                                continue;
+                            }
+                            
+                            
+                            if (pagamento == 1) {
+                                forma = "Dinheiro";
+                            } else if (pagamento == 2) {
+                                forma = "PIX";
+                            } else if (pagamento == 3) {
+                                forma = "Cartao";
+                            }
+                            historicoForma[historicoCont] = forma;
+                            historicoCont++;
+                            break;
+                            
+                        } catch (Exception e) {
+                            System.out.println("Entrada invalida. Digite apenas numeros.");
+                            en.nextLine();
+                        }
+                    }
+                    System.out.println("\nUso do veiculo finalizado com sucesso.");
+                    break;
+                    
+                case 3:
+                    System.out.println("");
+                    for (int i = 0; i < 10; i++) {
+                        if (i < 3) {
+                            System.out.println("Vaga " + (i + 1) + "(Tipo: 2): " + vagas[i]);
+                        }
+                        else if (i < 5) {
+                            System.out.println("Vaga " + (i + 1) + "(Tipo: 3): " + vagas[i]);
+                        }
+                        else if (i < 10) {
+                            System.out.println("Vaga " + (i + 1) + "(Tipo: 1): " + vagas[i]);
+                        }
+                    }
+                    
+                    int f = 10,j = 0;
+                    for (int i = 0; i < 10; i++) {
+                        if (vagas[i].equals("LIVRE")) {
+                            j++;
+                        }
+                        if (i == 9) {
+                            f = f - j;
+                            System.out.println("Total de vagas ocupadas: " + f);
+                            System.out.println("Total de vagas livres: " + j);
+                        }
+                    }
+                    break;
+                    
+                case 4:
+                    System.out.println("\n===== Historico de Pagamentos =====");
+                    System.out.println("------------------------------------");
+                    if (historicoCont == 0) {
+                        System.out.println("Nenhum pagamento registrado ainda.");
+                    } else {
+                        for (int i = 0; i < historicoCont; i++) {
+                            System.out.println("Codigo do Veiculo: " + historicoCod[i]);
+                            System.out.println("Valor Pago: R$ " + historicoValor[i]);
+                            System.out.println("Forma de Pagamento: " + historicoForma[i]);
+                            System.out.println("------------------------------------");
+                        }
+                    }
+                    break;
+                    
+                case 0:
+                    System.out.println("\nEncerrando programa...");
+                    break;
+                    
+            }
+        } while (opcao != 0);
+        
+        
+    }
+    
+}
+
+
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package trabalho_pratico_l_felipe_augusto;
+import java.util.Scanner;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class Veiculo {
+    
+    String placa, condutor, marca, modelo, cor;
+    int horaEntrada, minutoEntrada, tipo;
+    
+    
+    public void cadastro() {
+        
+        Scanner en = new Scanner (System.in);
+        
+        
+        while (true) {
+            try {
+                System.out.println("\n--- Tipo de Veiculo --- \n1 - Carro \n2 - Moto \n3 - Caminhao/Caminhonete");
+                System.out.print("Digite o tipo do veiculo: ");
+                tipo = en.nextInt();
+                en.nextLine();
+                
+                if (tipo < 1 || tipo > 3) {
+                    System.out.println("Tipo invalido. Por favor, digite 1, 2 ou 3.");
+                    continue;
+                }
+                break;
+                
+            } catch (Exception e) {
+                System.out.println("Entrada invalida. Digite apenas numeros.");
+                en.nextLine();
+            }
+        }   
+        
+        
+        while (true) {
+            System.out.print("\nDigite a placa do veiculo: ");
+            placa = en.nextLine();
+            
+            if (placa.length() == 7) {
+                break;
+            } else {
+                System.out.println("Erro! A placa deve conter exatamente 7 digitos.");
+            }
+        }
+        
+        
+        while (true) {
+            System.out.print("Digite o nome do condutor: ");
+            condutor = en.nextLine();
+            
+            if (!condutor.isEmpty() && condutor.matches("^[A-Za-zÀ-ú ]+$")) {
+                break;
+            } else {
+                System.out.println("Erro! Digite um nome valido (somente letras).");
+            }
+        }
+        
+        
+        while (true) {
+            System.out.print("Digite a marca do veiculo: ");
+            marca = en.nextLine();
+            
+            if (!marca.isEmpty() && marca.matches("^[A-Za-zÀ-ú ]+$")) {
+                break;
+            } else {
+                System.out.println("Erro! Digite um nome valido (somente letras).");
+            }
+        }
+        
+        
+        while (true) {
+            System.out.print("Digite o modelo do veiculo: ");
+            modelo = en.nextLine();
+            
+            if (!modelo.isEmpty()) {
+                break;
+            } else {
+                System.out.println("Erro! O campo nao pode ficar vazio.");
+            }
+        }
+        
+        
+        while (true) {
+            System.out.print("Digite a cor do veiculo: ");
+            cor = en.nextLine();
+            
+            if (!cor.isEmpty() && cor.matches("^[A-Za-zÀ-ú ]+$")) {
+                break;
+            } else {
+                System.out.println("Erro! Digite uma cor valida (somente letras).");
+            }
+        }
+        
+        
+        while (true) {
+            try {
+                System.out.print("Digite a hora de entrada (0-23): ");
+                horaEntrada = en.nextInt();
+                
+                if (horaEntrada < 0 || horaEntrada > 23) {
+                    System.out.println("Hora invalida. Por favor, digite valores corretos.");
+                    continue;
+                }
+                break;
+                
+            }catch (Exception e) {
+                System.out.println("Erro! Digite apenas numeros.");
+                en.nextLine();
+            }
+        }
+        
+        
+        while (true) {
+            try {
+                System.out.print("Digite o minuto de entrada (0-59): ");
+                minutoEntrada = en.nextInt();
+                
+                if (minutoEntrada < 0 || minutoEntrada > 59) {
+                    System.out.println("Minuto invalido. Por favor, digite valores corretos");
+                    continue;
+                }
+                break;
+                
+            }catch (Exception e) {
+                System.out.println("Erro! Digite apenas numeros.");
+                en.nextLine();
+            }
+        }
+    }
+    
+}
+
+
+
+
+
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package trabalho_pratico_l_felipe_augusto;
+import java.util.Scanner;
+
+/**
+ *
+ * @author FELIPE ROCHA
+ */
+public class CalculadoraTarifa {
+    
+    Scanner en = new Scanner (System.in);
+    
+    Veiculo v;
+    int horaSaida, minutoSaida, entradaTotal, saidaTotal, duracao, exedente;
+    double valor;
+    
+    public void calculo(Veiculo veiculoSaindo) {
+        this.v = veiculoSaindo;
+        
+        do {
+            while (true) {
+                try {
+                    System.out.print("Digite a hora de saida (0-23): ");
+                    horaSaida = en.nextInt();
+
+                    if (horaSaida < 0 || horaSaida > 23) {
+                        System.out.println("Hora invalida. Por favor, digite valores corretos.");
+                        continue;
+                    }
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Erro! Digite apenas numeros.");
+                    en.nextLine();
+                }
+            }
+
+            while (true) {
+                try {
+                    System.out.print("Digite o minuto de saida (0-59): ");
+                    minutoSaida = en.nextInt();
+
+                    if (minutoSaida < 0 || minutoSaida > 59) {
+                        System.out.println("Hora invalida. Por favor, digite valores corretos.");
+                        continue;
+                    }
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Erro! Digite apenas numeros.");
+                    en.nextLine();
+                }
+            }
+
+            entradaTotal = v.horaEntrada * 60 + v.minutoEntrada;
+            saidaTotal = horaSaida * 60 + minutoSaida;
+            duracao = saidaTotal - entradaTotal;
+
+            if (duracao < 0) {
+                System.out.println("A hora de saida nao pode ser menor que a de entrada. Tente novamente.");
+            }
+        } while (duracao < 0);
+        
+        if (v.tipo == 1) {
+            if (duracao <= 15) {
+                valor = 6.0;
+            } else if (duracao <= 30) {
+                valor = 17.0;
+            } else if (duracao <= 60) {
+                valor = 20.0;
+            } else {
+                exedente = duracao - 60;
+                valor = 20.0 + 1.35 * exedente;
+            }
+        } else if (v.tipo == 2) {
+            if (duracao <= 15) {
+                valor = 3.0;
+            } else if (duracao <= 30) {
+                valor = 7.0;
+            } else if (duracao <= 60) {
+                valor = 10.0;
+            } else {
+                exedente = duracao - 60;
+                valor = 10.0 + 1.0 * exedente;
+            }
+        } else if (v.tipo == 3) {
+            if (duracao <= 15) {
+                valor = 16.0;
+            } else if (duracao <= 30) {
+                valor = 27.0;
+            } else if (duracao <= 60) {
+                valor = 30.0;
+            } else {
+                int exedente = duracao - 60;
+                valor = 30.0 + 2.35 * exedente;
+            }
+        }
+    }
+}
+
